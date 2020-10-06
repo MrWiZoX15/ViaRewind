@@ -69,8 +69,8 @@ public class WorldPackets {
 						packetWrapper.write(Type.SHORT, (short) records.length);
 						packetWrapper.write(Type.INT, records.length * 4);
 						for (BlockChangeRecord record : records) {
-							packetWrapper.write(Type.UNSIGNED_BYTE, record.getHorizontal());
-							packetWrapper.write(Type.UNSIGNED_BYTE, record.getY());
+							short data = (short) (record.getSectionX() << 12 | record.getSectionZ() << 8 | record.getY());
+							packetWrapper.write(Type.SHORT, data);
 							BlockState state = BlockState.rawToState(record.getBlockId());
 							state = ReplacementRegistry1_7_6_10to1_8.replace(state);
 							packetWrapper.write(Type.SHORT, (short) BlockState.stateToRaw(state));
@@ -248,7 +248,7 @@ public class WorldPackets {
 					@Override
 					public void handle(PacketWrapper packetWrapper) throws Exception {
 						for (int i = 0; i < 4; i++) {
-							String line = packetWrapper.read(Type.COMPONENT).toString();
+							String line = packetWrapper.read(Type.STRING);
 							line = ChatUtil.jsonToLegacy(line);
 							line = ChatUtil.removeUnusedColor(line, '0');
 							if (line.length() > 15) {
